@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 using namespace std;
 
@@ -6,7 +7,7 @@ using namespace std;
 void sort(int a[], int n)
 {
     for(int i=0; i<n-1; i++)
-        for(int j=0; j<n-i; j++)
+        for(int j=0; j<n-i-1; j++)
             if(a[j] > a[j+1])
             {
                 int k = a[j];
@@ -15,7 +16,7 @@ void sort(int a[], int n)
             }
 }
 
-int merge(int arr1[], int arr2[], int arr3[], int n, int m)
+void merge(int arr1[], int arr2[], int arr3[], int n, int m)
 {
     int i=0, j=0, k=0;
     while(i<n && j<m)
@@ -39,12 +40,14 @@ void display(int a[], int n)
 int main()
 {
     fstream i1("input1.txt", ios::in), i2("input2.txt", ios::in);
-    int arr1[max_size], arr2[max_size], arr3[max_size + max_size] i, j;
+    int arr1[max_size], arr2[max_size], arr3[max_size + max_size], i=0, j=0, n, m;
     
     while(i1>>arr1[i++]);
     while(i2>>arr2[j++]);
-    sort(arr1);
-    sort(arr2);
+    j--; i--;
+    sort(arr1, i);
+    sort(arr2, j);
     merge(arr1, arr2, arr3, i, j);
     display(arr3, i+j);
+    return 0;
 }
