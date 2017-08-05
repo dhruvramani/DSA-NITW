@@ -2,10 +2,23 @@
 using namespace std;
 #define max_size 70
 
+struct addr {
+    int stno;
+    int ctno;
+};
+
+union address
+{
+    int cell;
+    struct addr ad;
+}; 
+
 struct record {
     string name;
     int roll;
     double CGPA;
+    int tag;
+    union address a;
 };
 
 int search(record rec[], int roll)
@@ -19,7 +32,11 @@ int search(record rec[], int roll)
 
 void print(record rec)
 {
-    cout<<rec.roll<<"\t"<<rec.name<<"\t"<<rec.CGPA;
+    cout<<rec.roll<<"\t"<<rec.name<<"\t"<<rec.CGPA<<"\t";
+    if(rec.tag == 0)
+        cout<<rec.a.cell;
+    else 
+        cout<<rec.a.ad.stno<<"\t"<<rec.a.ad.ctno;
 }
 
 void input(int n, record rec[])
@@ -32,6 +49,13 @@ void input(int n, record rec[])
         cin>>rec[i].name;
         cout<<"CGPA ";
         cin>>rec[i].CGPA;
+        cout<<"Cell (0) or Address [street number & city number] (1)? ";
+        cin>>rec[i].tag;
+        cout<<"Enter Value : "
+        if(rec[i].tag == 0)
+            cin>>rec[i].a.cell;
+        else
+            cin>>rec[i].a.ad.stno>>rec[i].a.ad.ctno;
     }
 }
 int main()
@@ -51,7 +75,7 @@ int main()
             cin>>n;
             cout<<search(recs, n);
         case 3:
-            n = sizeof(rec) / sizeof(record);
+            n = sizeof(recs) / sizeof(record);
             for(int i = 0; i<n; i++)
                 print(recs[i]);
         default : 
