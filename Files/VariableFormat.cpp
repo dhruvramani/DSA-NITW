@@ -13,7 +13,7 @@ struct child
 {
     integer age;
     char name[15];
-}
+};
 struct employee {
     integer  empno;
     char name[10];
@@ -31,7 +31,7 @@ class Buffer
         nextpos=0;
         buff = new char();
     }
-    void pack(employee s)
+    void pack(employee em)
     {   
         strcat(buff, em.empno);
         strcat(buff, delim);
@@ -48,7 +48,7 @@ class Buffer
         }
         strcat(buff, record_delim);
         nextpos += 27
-        fstream f("file1.txt", ios::app);
+        fstream f("file3.txt", ios::app);
         f<<buff;
         f.close();
     }
@@ -57,12 +57,11 @@ class Buffer
     {
         char c, *co = &c;
         employee s;
-        for(int count=1, count2=1; count <= 3; count++)
+        for(int count=1; count <= 4; count++)
         {
             do
             {
                 f>>c;
-                cout<<endl<<count<<" "<<c<<endl;
                 if(c != delim[0] && c != record_delim[0])
                    if(count == 1)
                         strcat(em.empno, co);
@@ -92,7 +91,7 @@ class Buffer
 
 void read(Buffer b)
 {
-    fstream f("file1.txt", ios::in);
+    fstream f("file3.txt", ios::in);
     while(!f.eof()) {
         employee s=b.unpack(f);
         cout<<"Roll : "<<em.empno<<" Name : "<<em.name<<"\nChildren : \n";
@@ -105,7 +104,7 @@ int search(char* empno, Buffer b)
 {
     employee s;
     int count=0;
-    fstream f("file1.txt", ios::in);
+    fstream f("file3.txt", ios::in);
     while(!f.eof())
     {
         count++;

@@ -12,7 +12,7 @@ void read(fstream &f)
     int data;
     while(f>>data)
         cout<<"Roll : "<<s.rno<<" Name : "<<s.name<<" Marks : "<<s.marks<<"\n";
-    f.close();
+    f.seekg(ios::beg);
 }
 
 int search(int data, fstream &f)
@@ -27,6 +27,16 @@ int search(int data, fstream &f)
     return -1;
 }   
 
+void insert_at(fstream &f, int pos, int data)
+{
+    f.seekp(pos, ios::curr);
+    f<<data;
+}
+void read_at(fstream &f, int pos)
+{
+    f.seekg(pos, ios::curr);
+    f>>data;
+}
 int main()
 {
     int pos, data;

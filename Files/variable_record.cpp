@@ -12,7 +12,7 @@ char* delim = "|";
 struct boo
 {
     integer stno, ctno;
-}
+};
 union addr 
 {   
     boo b;
@@ -58,7 +58,7 @@ class Buffer
         }
         strcat(buff, record_delim);
         nextpos += 17 + strlen(s.name);
-        fstream f("file1.txt", ios::app);
+        fstream f("file2.txt", ios::app);
         f<<buff;
         f.close();
     }
@@ -67,12 +67,11 @@ class Buffer
     {
         char c, *co = &c;
         student s;
-        for(int count=1, count2=1; count <= 3; count++)
+        for(int count=1, count2=1; count <= 4; count++)
         {
             do
             {
                 f>>c;
-                cout<<endl<<count<<" "<<c<<endl;
                 if(c != delim[0] && c != record_delim[0])
                    if(count == 1)
                         strcat(s.rno, co);
@@ -100,7 +99,7 @@ class Buffer
 
 void read(Buffer b)
 {
-    fstream f("file1.txt", ios::in);
+    fstream f("file2.txt", ios::in);
     while(!f.eof()) {
         student s=b.unpack(f);
         cout<<"Roll : "<<s.rno<<" Name : "<<s.name<<" Marks : "<<s.marks;
@@ -115,7 +114,7 @@ int search(char* rno, Buffer b)
 {
     student s;
     int count=0;
-    fstream f("file1.txt", ios::in);
+    fstream f("file2.txt", ios::in);
     while(!f.eof())
     {
         count++;

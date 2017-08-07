@@ -47,7 +47,6 @@ class Buffer
             do
             {
                 f>>c;
-                cout<<endl<<count<<" "<<c<<endl;
                 if(c != delim[0] && c != record_delim[0])
                    if(count == 1)
                         strcat(s.rno, co);
