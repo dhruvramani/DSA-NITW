@@ -13,12 +13,12 @@ struct stack {
 	int elements[max_size];
 };
 
-int is_empty(queue Q)
+int isempty(queue Q)
 {
 	return Q.rear == -1 || Q.front == -1;
 }
 
-int is_empty(stack S)
+int isempty(stack S)
 {
 	return S.top == -1;
 }
@@ -40,14 +40,14 @@ void enqueue(queue& Q, int x)
 		cout<<"Queue is full."<<endl;
 		return ;
 	}
-	if(is_empty(Q))
+	if(isempty(Q))
 		Q.front=0;
 	Q.elements[(++Q.rear) % Q.size] = x;
 }
 
 int dequeue(queue& Q)
 {
-	if(is_empty(Q))
+	if(isempty(Q))
 		return -1;
 	int x = Q.elements[Q.front];
 	if(Q.front == Q.rear)
@@ -61,7 +61,7 @@ int dequeue(queue& Q)
 
 int pop(stack& S)
 {
-	if(is_empty(S))
+	if(isempty(S))
 		return -1000;
 	return S.elements[S.top--];
 }
@@ -80,9 +80,9 @@ void reverse(stack &S)
 {
 	queue Q;
 	Q.front = -1; Q.rear = -1; Q.size = S.size;
-	while(!is_empty(S))
+	while(!isempty(S))
 		enqueue(Q, pop(S));
-	while(!is_empty(Q))
+	while(!isempty(Q))
 		push(S, dequeue(Q));
 }
 

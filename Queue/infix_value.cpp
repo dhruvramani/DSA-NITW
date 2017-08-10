@@ -22,7 +22,7 @@ struct stack {
 	union op elements[max_size];
 };
 
-int is_empty(queue Q)
+int isempty(queue Q)
 {
 	return Q.rear == -1 || Q.front == -1;
 }
@@ -39,17 +39,18 @@ void enqueue(queue& Q, int tag, op a)
 		cout<<"Queue is full."<<endl;
 		return ;
 	}
-	if(is_empty(Q))
+	if(isempty(Q))
 		Q.front=0;
 	Q.elements[(++Q.rear) % Q.size] = a;
 	Q.tags[Q.rear % Q.size] = tag;
+	Q.size++;
 }
 
 op dequeue(queue& Q)
 {
 	op x;
 	x.operand = -1000;
-	if(is_empty(Q))
+	if(isempty(Q))
 		return x;
 	x = Q.elements[Q.front];
 	if(Q.front == Q.rear)
@@ -58,10 +59,11 @@ op dequeue(queue& Q)
 		Q.front = -1;
 	} else 
 		Q.front = (Q.front + 1) % Q.size;
+	Q.size--;
 	return x;
 }
 
-int is_empty(stack S)
+int isempty(stack S)
 {
 	return S.top == -1;
 }
@@ -75,14 +77,14 @@ op pop(stack& S)
 {
 	op x;
 	x.operand = -1000;
-	if(is_empty(S))
+	if(isempty(S))
 		return x;
 	return S.elements[S.top--];
 }
 
 int tag_peep(stack& S)
 {
-	if(is_empty(S))
+	if(isempty(S))
 		return -1;
 	return S.tags[S.top];
 }
@@ -98,7 +100,7 @@ void push(stack& S, int tag, op a)
 	S.tags[S.top] = tag;	
 } 
 
-op perform_operation(op operatr, op inta, op intb)
+op perform_operation(op inta, op intb, op operatr)
 {
 	op k;
 	k.operand = -1;
@@ -121,68 +123,66 @@ op perform_operation(op operatr, op inta, op intb)
 	return k;
 }
 
-op prefix_value(queue Q)
+void prefix_value(queue &Q)
 {
 	stack S;
 	S.top = -1; S.size = Q.size;
-	while(Q.rear != Q.front)
+	int original_size = Q.size;
+	while(Q.size > 0)
 	{
-		int original_size = Q.size;
-		for(int i=0; i < original_size; i+=2)
+		push(S, Q.tags[Q.front % Q.size], dequeue(Q));
+		if(tag_peep(S) == 0)
 		{
-			op a = dequeue(Q);
-			if(a.operand == -1000)
-			{
-				while(!is_empty(S))
-					enqueue(Q, S.tags[S.top], pop(S));
-				break;
-			}
-			push(S, Q.tags[Q.rear], a);
+			push(S, Q.tags[Q.front % Q.size], dequeue(Q));
 			if(tag_peep(S) == 0)
 			{
-				push(S, Q.tags[Q.rear], dequeue(Q));
-				if(tag_peep(S) == 0)
-				{
-					op k = pop(S); 
-					cout<<k.operate<<endl;
-					return k;
-					enqueue(Q, 0, pop(S));
-					enqueue(Q, 0, pop(S));
-				} 	
-			} else if(tag_peep(S) == 1) {
-				push(S, Q.tags[Q.rear], dequeue(Q));
-				if(tag_peep(S) == 1)
+				enqueue(Q, 0, pop(S));
+				enqueue(Q, 0, pop(S));
+			} else {
+				push(S, Q.tags[Q.front % Q.size], dequeue(Q));
+				if(tag_peep(S) != 0)
 				{
 					push(S, Q.tags[Q.rear], dequeue(Q));
-					if(tag_peep(S) == 0)
+					if(tag_peep(S) != 0)
 						enqueue(Q, 1, perform_operation(pop(S), pop(S), pop(S)));
-					i += 1;
 				}
 			}
-		}	
+		}
+		if(Q.size < original_size)
+			prefix_value(Q);
+		else 
+			break;	
 	}
-	return dequeue(Q);
-} 
+	op k = dequeue(Q);
+	cout<<"Value : "<<k.operand;
+}
+
 
 int main()
 {
+	cout<<"Hello";
 	queue Q;
-	Q.front = -1; Q.rear = -1;
+	Q.front = -1; Q.rear = -1; Q.size = 0;
 	fstream f("input.txt", ios::in);
 	int tag;
 	while(f>>tag)
 	{
 		union op a;
-		Q.size++;
-		cout<<tag<<" ";
 		if(tag == 0)
+		{
 			f>>a.operate;
+			cout<<a.operate<<" ";
+		}
 		else 
+		{
 			f>>a.operand;
+			cout<<a.operand<<" ";
+		}
 		enqueue(Q, tag, a);
 	}
+	cout<<endl;
+	Q.front = 0;
 	f.close();
-	op k = prefix_value(Q);
-	//cout<<"Value : "<<k.operand;
+	prefix_value(Q);
 	return 0;
 }

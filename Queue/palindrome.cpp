@@ -13,7 +13,7 @@ struct stack {
 	int elements[max_size];
 };
 
-int is_empty(queue Q)
+int isempty(queue Q)
 {
 	return Q.rear == -1 || Q.front == -1;
 }
@@ -30,14 +30,14 @@ void enqueue(queue& Q, int x)
 		cout<<"Queue is full."<<endl;
 		return ;
 	}
-	if(is_empty(Q))
+	if(isempty(Q))
 		Q.front=0;
 	Q.elements[(++Q.rear) % Q.size] = x;
 }
 
 int dequeue(queue& Q)
 {
-	if(is_empty(Q))
+	if(isempty(Q))
 		return -1;
 	int x = Q.elements[Q.front];
 	if(Q.front == Q.rear)
@@ -49,7 +49,7 @@ int dequeue(queue& Q)
 	return x;
 }
 
-int is_empty(stack S)
+int isempty(stack S)
 {
 	return S.top == -1;
 }
@@ -61,7 +61,7 @@ int is_full(stack S)
 
 int pop(stack& S)
 {
-	if(is_empty(S))
+	if(isempty(S))
 		return -1000;
 	return S.elements[S.top--];
 }
@@ -81,9 +81,9 @@ void reverse(queue &Q)
 {
 	stack S;
 	S.top = -1; S.size = Q.size;
-	while(!is_empty(Q))
+	while(!isempty(Q))
 		push(S, dequeue(Q));
-	while(!is_empty(S))
+	while(!isempty(S))
 		enqueue(Q, pop(S));
 }
 
@@ -91,7 +91,7 @@ int palindrome(queue Q)
 {
 	queue Q2 = Q;
 	reverse(Q2);
-	while(!is_empty(Q))
+	while(!isempty(Q))
 		if(dequeue(Q) != dequeue(Q2))
 			return 0;
 	return 1;
