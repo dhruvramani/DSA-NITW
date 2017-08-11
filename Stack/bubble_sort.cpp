@@ -8,7 +8,7 @@ struct stack {
 	int elements[max_size];
 };
 
-int is_empty(stack S)
+int isempty(stack S)
 {
 	return S.top == -1;
 }
@@ -20,7 +20,7 @@ int is_full(stack S)
 
 int pop(stack& S)
 {
-	if(is_empty(S))
+	if(isempty(S))
 		return -1000;
 	return S.elements[S.top--];
 }
@@ -57,9 +57,9 @@ void bubble_sort(int a[], int n)
 				} else 
 					push(s1, a[j]);
 		int j=0;
-		while(!is_empty(s1))
+		while(!isempty(s1))
 			a[j++] = pop(s1);
-		while(!is_empty(s2))
+		while(!isempty(s2))
 			a[j++] = pop(s2);
 	}
 }

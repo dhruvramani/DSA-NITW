@@ -8,56 +8,77 @@ struct stack {
 	int elements[2 * max_size];
 };
 
-int is_empty(stack S, int tag)
+int isempty(stack S, int tag)
 {
-	return (tag == 1)?S.top1 == -1:S.top2 == 2*S.size;
+	return (tag == 1)?S.top1 == S.size/2:S.top2 == S.size/2;
 }
 
-int is_full(stack S)
+int is_full(stack S, int tag)
 {
-	return (tag == 1)?S.top1 == S.size - 1:S.top2 == S.size + 1;
+	return (tag == 1)?S.top1 == 0:S.top2 == S.size;
 }
 
 int pop(stack& S, int tag)
 {
-	if(is_empty(S))
+	if(isempty(S, tag))
 		return -1000;
-	return (tag == 1)?S.elements[S.top1--]S.elements[S.top2++];
+	return (tag == 1)?S.elements[S.top1++]:S.elements[S.top2--];
 }
 
-void push(stack& S, int x. int tag)
+void push(stack& S, int x, int tag)
 {
-	if(is_full(S))
+	if(is_full(S, tag))
 	{
 		cout<<"Stack is full."<<endl;
-		return;
+		return ;
 	}
+
 	if(tag == 1)
-		S.elements[++S.top1] = x;
+		S.elements[--S.top1] = x;
 	else 
-		S.elements[S.top2--] = x;	
+		S.elements[++S.top2] = x;	
 }
 
 void init_stack(stack &S)
 {
 	S.size = max_size;
-	S.top1 = -1;
-	S.top2 = S.size * 2;
+	S.top1 = S.size/2;
+	S.top2 = S.size/2;
 }
 
 
 int main()
 {
-	int n, a[max_size];
-	cout<<"Enter number of elements : ";
-	cin>>n;
-	for(int i=0; i<n; i++)
-	{
-		cout<<"Enter Number : ";
-		cin>>a[i];
-	}
-	bubble_sort(a, n);
-	for(int i=0; i<n; i++)
-		cout<<a[i]<<" ";
-	return 0;
+	stack s;
+ 	init_stack(s);
+ 	int op, i;
+    do {
+    	cout<<"\n1. Push in Stack 1\n2. Push in Stack 2\n3. Pop from Stack 1\n4. Pop from Stack 2\n0. Quit\nChoose one : ";
+        cin>>op;
+        switch(op)
+        {
+            case 1:
+                cout<<"Enter Value : ";
+                cin>>i;
+                push(s, i, 1);
+                break;
+            case 2:
+                cout<<"Enter Value : ";
+                cin>>i;
+                push(s, i, 2);
+                break;
+            case 3:
+                cout<<"Value : "<<pop(s, 1)<<endl;
+                break;
+            case 4:
+                cout<<"Value : "<<pop(s, 2)<<endl;
+                break;
+            case 0:
+            	cout<<"Quiting.";
+            	break;
+            default :
+                cout<<"Bad Choice";
+        }
+    } while(op != 0);
+    return 0;
 }
