@@ -25,6 +25,7 @@ void reverse(char str[])
 
 void prefixToInfix(char infix[])
 {
+    reverse(expression);
     int priority[]={0, 0, 1, 1, 1};
     char operators[]={'+','-','/','*','%'};
     for(int i=1; infix[i]; i++)
@@ -38,6 +39,7 @@ void prefixToInfix(char infix[])
                     infix[j] = k;
                     done = 1;
                 }
+    reverse(expression);
 }
 
 int main()
@@ -45,9 +47,7 @@ int main()
     char expression[max_size];
     cout<<"Enter Postfix Expression : ";
     cin>>expression;
-    reverse(expression);
     prefixToInfix(expression);
-    reverse(expression);
     cout<<"Infix Expression : "<<expression;
     return 0;
 }
