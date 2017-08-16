@@ -32,7 +32,8 @@ lptr merge(lptr l1, lptr l2, lptr r)
 {
     lptr l3 = r;
     while(l1 != NULL && l2 != NULL)
-        if(l1->data >= l2->data)
+    {
+        if(l1->data <= l2->data)
         {
             l3 = add(l3, l1->data);
             l1 = l1->next;
@@ -42,21 +43,21 @@ lptr merge(lptr l1, lptr l2, lptr r)
             l2 = l2->next;
             l3 = l3->next;
         }
-
+    }
+    cout<<r->data;
     while(l1 != NULL) 
     {
-            l3 = add(l3, l1->data);
-            l1 = l1->next;
-            l3 = l3->next;
+        l3 = add(l3, l1->data);
+        l1 = l1->next;
+        l3 = l3->next;
     } 
 
     while(l2 != NULL) 
     {
-            l3 = add(l3, l2->data);
-            l2 = l2->next;
-            l3 = l3->next;
+        l3 = add(l3, l2->data);
+        l2 = l2->next;
+        l3 = l3->next;
     } 
-
     return r;       
 }
 
@@ -72,7 +73,7 @@ void print(lptr l)
 
 int main()
 {
-    lptr l1 = NULL, l2 = NULL, l3;
+    lptr l1 = NULL, l2 = NULL, l3 = NULL;
     int n;
     cout<<"Enter No. of Elements for L1 : ";
     cin>>n;
