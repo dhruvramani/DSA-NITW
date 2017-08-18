@@ -21,13 +21,13 @@ int isFull(stack s)
 int pop(stack &s)
 {
     if(isEmpty(s))
-        return '\0';
+        return -1000;
     return s.elements[s.top--];
 }
 int peep(stack s)
 {
     if(isEmpty(s))
-        return '\0';   
+        return -1000;   
     return s.elements[s.top];
 }
 void push(stack &s, int elem)
