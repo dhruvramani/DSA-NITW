@@ -14,6 +14,7 @@ struct child
     integer age;
     char name[15];
 };
+
 struct employee {
     integer  empno;
     char name[10];
@@ -25,11 +26,11 @@ class Buffer
 {
     int nextpos;
     public :
-    char* buff;
+    char buff[100];
     Buffer()
     {
         nextpos=0;
-        buff = new char();
+        buff = "";
     }
     void pack(employee em)
     {   

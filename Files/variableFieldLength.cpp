@@ -18,11 +18,11 @@ class Buffer
 {
     int nextpos;
     public :
-    char* buff;
+    char buff[100];
     Buffer()
     {
         nextpos=0;
-        buff = new char();
+        buff = "";
     }
     void pack(student s)
     {   

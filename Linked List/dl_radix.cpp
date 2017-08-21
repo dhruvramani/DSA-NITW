@@ -1,15 +1,21 @@
 #include <iostream>
 using namespace std;
 
-#define max_size 50
-struct mlnode 
+struct lnode
 {
-    int tag;
-    mlnode *down;
-    mlnode *next;
+    int data;
+    lnode *next;    
 };
 
-typedef mlnode *mlptr;
+struct dlnode
+{   
+    int tag;
+    lnode *down;
+    dlnode *left, *right;
+};
+
+typedef lnode *lptr;
+typedef dlnode *dlptr;
 
 int pow(int x, int p) {
   if (p == 0) return 1;
@@ -17,33 +23,32 @@ int pow(int x, int p) {
   return x * pow(x, p-1);
 }
 
-mlptr radix_add(mlptr m, int number, int base)
+dlptr radix_add(dlptr m, int number, int base)
 {
-    mlptr l = m;
+    dlptr l = m;
     int index = (number % pow(10, base)) / pow(10, base-1), count = 0;
     while(l->tag != index)
         l = l->next;
     while(l->down != NULL)
         l = l->down;
-    l->down = new mlnode;
+    l->down = new lnode;
     l = l->down;
-    l->tag = number;
+    l->data = number;
     l->next = NULL;
-    l->down = NULL;
     return m;
 }
 
-mlptr radix_remove(int a[], mlptr m)
+dlptr radix_remove(int a[], mlptr m)
 {   
     int count = 0;
-    mlptr k = m;
+    dlptr k = m;
     for(int i=0; i<10; i++)
     {
-        mlptr l = k->down;
+        lptr l = k->down;
         while(l != NULL)
         {
-            a[count++] = l->tag;
-            mlptr p = l;
+            a[count++] = l->data;
+            lptr p = l;
             l = l->down;
             p = NULL;
         }
@@ -52,21 +57,22 @@ mlptr radix_remove(int a[], mlptr m)
     return m;
 }
 
-mlptr create_arch(mlptr m)
+dlptr create_arch(dlptr m)
 {
-    m = new mlnode;
-    mlptr l = m;  
+    m = new dlnode;
+    dlptr l = m;  
     for(int i=0; i<10; i++)
     {
         l->tag = i;
         l->down = NULL;
-        l->next = new mlnode;
-        l = l->next;
+        l->right = new mlnode;
+        l->right->left = l;
+        l = l->right;
     }
     return m;
 }
 
-void radix_sort(int a[], int n, int base, mlptr m)
+void radix_sort(int a[], int n, int base, dlptr m)
 {
     int go = 0, j=0;
     for(int i=0; i<n; i++)
@@ -82,7 +88,7 @@ void radix_sort(int a[], int n, int base, mlptr m)
 
 int main()
 {
-    mlptr m = NULL;
+    dlptr m = NULL;
     m = create_arch(m);
     int n, a[max_size];
     cout<<"Enter number of elements : ";
