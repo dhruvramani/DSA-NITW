@@ -12,6 +12,7 @@ char* delim = "|";
 struct employee {
     integer  empno;
     char name[10];
+    integer fwdptr, bptr;
 };
 
 class Buffer
@@ -42,18 +43,18 @@ class Buffer
 
     void add(employee em)
     {
-        int position = hash(em.empno), count = 0;
+        int position = hash(em.empno), count = 0, original = position;
         while(cout < size -1)
         {
-        	int done = 0;
+            int done = 0;
             while(done == 0 && position < size)
             {
-                done = pack(em, position);
-				position++;
+                done = pack(em, position, original);
+                position++;
                 count++;
             }
             if(done == 1)
-            	break;
+                break;
             if(position == size - 1 && count != size -1)
                 position = 0;
         }
@@ -61,15 +62,16 @@ class Buffer
             cout<<"Overflow";
     }
 
-	int pos(int n)
+	int pos(int n, char *delimi)
 	{
+		
 		char c;
 		int i = 0, j = 0;
 		fstream f("file3.txt", ios::in);
 		while(i < n - 1)
         {
             f.get(c);
-            if(c == record_delim[0])
+            if(c == delimi[0])
                 i++;
             j++;
         }
@@ -77,63 +79,70 @@ class Buffer
         return j;
 	}
 	
-    int pack(employee em, int position)
+    int pack(employee em, int position, int original)
     {   
+        char org[4];
+        memcpy(&original, org, sizeof(int));
     	fstream f("file3.txt", ios::out | ios::in);
         strcpy(buff, "");
         strcat(buff, "\r\r #");
         strcat(buff, em.empno);
         strcat(buff, delim);
         strcat(buff, em.name);
-        nextpos += 14;
-        f.seekp(pos(position), ios::beg);
-        f.seekg(pos(position), ios::beg);
-        char c, str[14 * 40];
-        int i = 0;
-		f.get(c);
+        strcat(buff, delim);
+        strcat(buff, "-100");
+        strcat(buff, delim);
+        strcat(buff, org);
+        nextpos += 22;
+        f.seekp(pos(original, record_delim), ios::beg);
+        f.seekg(pos(original, record_delim), ios::beg);
+        char c, str[22 * 40];
+        int i=0;
+        f.clear();
+        f.seekp(pos(2, delim), ios::beg);
+        f.seekg(pos(2, delim), ios::beg);
+        	f<<original;
+		f.clear();
+		f.seekp(pos(position, record_delim), ios::beg);
+        f.seekg(pos(position, record_delim), ios::beg);	
         if(c != ' ')
             return 0;
         fstream f2("file3.txt", ios::in);
-        f2.seekg(pos(position + 1) - 1, ios::beg);
+        f2.seekg(pos(position + 1, record_delim), ios::beg);
         while(!f2.eof())
         	f2.get(str[i++]);
         f2.close();
-        f.seekg(pos(position) - 1, ios::beg);
         f<<buff<<str;
         f.close();
         return 1;
     }
 
-    employee unpack(int index)
+	employee unpack(int index)
     {
-    	fstream f("file3.txt", ios::in);
-        char c, old, *co = &c;
+        fstream f("file3.txt", ios::in);
+        char c, *co = &c;
         employee s;
-		f.seekg(pos(index), ios::beg);
-        strcat(s.empno, "");
-        strcat(s.name, "");
-        for(int count=1; count <= 2; count++)
+		f.seekg(pos(index, record_delim), ios::beg);
+        for(int count=1; count <= 4; count++)
         {
-            while(c != delim[0])
-            {
-                f.get(c);
-                if(c >= '0' && c <= '9' && old == '#')
-                    break;
-                old = c;
-            }
             do
             {
+                f.get(c);
                 if(c != delim[0] && c != record_delim[0])
                 {
-                   if(count == 1)
+                   	if(count == 1)
                         strcat(s.empno, co);
                     else if(count == 2)
                         strcat(s.name, co);
-                } else 
-                    break;
-                f.get(c);
+                    else if(count == 3)
+                    	strcat(s.fwdptr, co);
+                    else if(count == 4)
+                    	strcat(s.bptr, co);
+                }
             } while(c != delim[0] && c != record_delim[0]);
         }
+        //while(c ! = record_delim[0] && !f.eof())
+        //	f.get(c);
         f.close();
         return s;
     }
@@ -153,26 +162,74 @@ void read(Buffer b)
 
 int search(char* empno, Buffer b)
 {
+    employee s;
     fstream f("file3.txt", ios::in);
     char a[100], emp[4];
-    int count = b.hash(empno);
+    int count=b.pos(b.hash(empno), record_delim);
     while(!f.eof())
     {
-        strcpy(emp, "");
-    	f.seekg(count);
+    	strcpy(emp, "");
+        f.seekg(count);
         f.getline(a, 100, '#');
-        for(int i=0; a[i] != delim[0] && i<4; i++)
+        for(int i=0; a[i] != delim[0]; i++)
             emp[i] = a[i];
-        if(strcmp(empno, emp) == 0)
-        {
-            f.close();
+
+        if(strcmp(empno, s.empno) == 0) {
+        	f.close();
             return count;
-        } else 	
-        	count++;
+    	} else {
+        	int fwd = stoi(s.fwdptr);
+        	if(fwd == -100) {
+        		f.close();
+        		return -1;
+        	}
+        	count = b.pos(fwd, record_delim);
+		}
     }
     f.close();
     return -1;
 }   
+
+int del(char *empno, Buffer b)
+{
+	employee s;
+    fstream f("file3.txt", ios::in | ios::out);
+    int count = b.pos(b.hash(empno), record_delim);
+    while(!f.eof())
+    {
+    	f.seekg(count);
+        employee s = b.unpack(count);
+        if(strcmp(empno, s.empno) == 0)
+        {
+    		int to_copy = count;
+			char c, str[22 * 39];
+			while(c != record_delim[0])
+			{
+				f.get(c);
+				to_copy++;
+			}
+			f.seekp(to_copy, ios::beg);
+			f.getline(str, 22*39);
+			f.seekp(cout, ios::beg);
+			f<<str;
+			f.seekp(to_copy - count, ios::end);
+			while(!f.eof())
+				f<<' ';
+			f.close();
+			return 1;
+        } else {
+        	int fwd = stoi(s.fwdptr);
+        	if(fwd == -100)
+        	{
+        		f.close();
+        		return -1;
+        	}
+        	count = b.pos(fwd, record_delim);
+		}	
+    }	
+    f.close();
+    return -1;
+}
 
 int main()
 {
@@ -181,7 +238,7 @@ int main()
     Buffer b;
     b.init();
     do {
-        cout<<"\n1. Enter Record\n2. Search Records\n3. View Records\n0. Quit\nEnter Option : ";
+        cout<<"\n1. Enter Record\n2. Search Records\n3. View Records\n4. Delete Records\n0. Quit\nEnter Option : ";
         cin>>op;
         switch(op) 
         {
@@ -197,15 +254,26 @@ int main()
                 char empno[4];
                 cout<<"Empno to search : ";
                 cin>>empno;
-                int a=search(empno, b);
+                int a = search(empno, b);
                 if(a != -1)
-                    cout<<"Found";
-                else cout<<"Not found";
+                    cout<<"Emp No. found";
+                else cout<<"Emp No. not found";
                 break;
             }
             case 3: 
                 read(b);
                 break;
+            case 4: 
+            {
+            	char empno[4];
+                cout<<"Empno to delete : ";
+                cin>>empno;
+                int a = del(empno, b);
+                if(a != -1)
+                    cout<<"Emp Deleted.";
+                else cout<<"Emp No. not found";
+                break;
+            }
             case 0:
                 cout<<"Quitting";
                 break;
