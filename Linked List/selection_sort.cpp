@@ -28,7 +28,7 @@ lptr add(lptr l, int k)
     return l;
 }
 
-lptr insertion_sort(lptr h)
+lptr selection_sort(lptr h)
 {
     lptr l = h;
     while(l->next != NULL)
@@ -74,7 +74,7 @@ int main()
         cin>>k;
         l1 = add(l1, k);
     }
-    l1 = insertion_sort(l1);
+    l1 = selection_sort(l1);
     print(l1);
     return 0;
 }
