@@ -103,7 +103,6 @@ int main()
 		::level = 0;
 		root = add(root, a[i]);
 	}
-	//cout<<root->keys.k1<<" "<<root->rchild->keys.k1;//<<" "<<root->rchild->keys.k1<<endl;
     preorder(root);
     cout<<endl<<search(root, to_search);
     return 0;

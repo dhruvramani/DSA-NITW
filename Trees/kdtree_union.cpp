@@ -44,7 +44,8 @@ KTPTR add(KTPTR root, data newdat[])
 	} else {
 		root = new ktnode;
 		root = init(root);
-		root->keys = newdat;
+        for(int i=0; i<d; i++)
+		  root->keys[i] = newdat[i];
 	}
 	return root;
 }
@@ -72,15 +73,15 @@ int search(KTPTR root, data to_search[])
 		int old_level = level_2;
 		level_2 = (level_2 + 1)%d;
 		if(tags[old_level] == 0) {
-			if(root->keys[old_level].k1 > to_search.k1)
-				return search(root->lchild, newdat);
+			if(root->keys[old_level].k1 > to_search[old_level].k1)
+				return search(root->lchild, to_search);
 			else 
-				return search(root->rchild, newdat);
+				return search(root->rchild, to_search);
 		} else if(tags[old_level] == 1) {
-			if(root->keys[old_level].k2 > to_search.k2)
-				return search(root->lchild, newdat);
+			if(root->keys[old_level].k2 > to_search[old_level].k2)
+				return search(root->lchild, to_search);
 			else 
-				return search(root->rchild, newdat);
+				return search(root->rchild, to_search);
 		}
 	}
 	return 0;
@@ -133,7 +134,7 @@ int main()
 	}
     preorder(root);
     data to_search[max_size];
-    cout<<"To Search"
+    cout<<"To Search";
     for(int j=0; j<d; j++)
     {
     	if(tags[j] == 0) {
