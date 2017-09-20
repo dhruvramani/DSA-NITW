@@ -81,7 +81,7 @@ BLPTR search(BLPTR root, int a)
 
 BLPTR overflow_create(BLPTR node, int a)
 {
-    int i, j;
+    int i=0, j;
     node->keys_count = 2*d+1;
     for (j=node->keys_count-2; j >= 0  && node->keys[j] > a; j--)
        node->keys[j+1] = node->keys[j];
@@ -119,12 +119,10 @@ BLPTR add(BLPTR root, int a, int root_add=0)
                 node1 = basic_add(node1, overflow->keys[i]);
                 node1->children[i+1] = overflow->children[i+1];
             }
-            
-            node2->children[0] = overflow->children[i+2];
-            for(int j=i+1; j<sizeof(overflow->keys)/sizeof(int); j++)
+            for(int j=i+1; j<overflow->keys_count; j++)
             {
                 node2 = basic_add(node2, overflow->keys[j]);
-                node2->children[j-i] = overflow->children[j+1];
+                node2->children[j-i-1] = overflow->children[j];
             }
             if(parent == NULL)
             {
@@ -165,10 +163,10 @@ void preorder(BLPTR node)
 {
     if(node != NULL)
     {
-        for(int i=0; i<=node->keys_count; i++)
+        for(int i=0; i<=node->keys_count+1; i++)
             if(node->keys[i] != -1)
                 cout<<node->keys[i]<<" ";
-        
+
         int count = 0;
         for(int i=0; i<=node->keys_count; i++)
             if(node->children[i] != NULL)
