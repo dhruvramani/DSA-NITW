@@ -56,7 +56,7 @@ BLPTR search(BLPTR root, int a)
 {
     if(root != NULL)
     {
-        for(int i=0; i<root->keys_count; i++)
+        for(int i=0; i<root->keys_count+1; i++)
             if(a == root->keys[i])
                 return root;
         int cont = 0;
@@ -68,8 +68,8 @@ BLPTR search(BLPTR root, int a)
         else {
             if(a < root->keys[0] && root->children[0])
                 return search(root->children[0], a);
-            else if(a > root->keys[root->keys_count] && root->children[root->keys_count])
-                return search(root->children[root->keys_count], a);
+            else if(a > root->keys[root->keys_count] && root->children[root->keys_count+1])
+                return search(root->children[root->keys_count+1], a);
             else 
                 for(int i=0; root->keys_count - 1; i++)
                     if(a > root->keys[i] && a < root->keys[i + 1] && root->children[i+1])
@@ -81,31 +81,29 @@ BLPTR search(BLPTR root, int a)
 
 BLPTR overflow_create(BLPTR node, int a)
 {
-    int i=0;
+    int i, j;
     node->keys_count = 2*d+1;
-    for(;i < node->keys_count && node->keys[i] < a; i++);
-    for(int j=i; j<node->keys_count-1; j++)
-        node->keys[j+1] = node->keys[j];
-    node->keys[i] = a;
-    for(int j=i; j<node->keys_count-1; j++)
+    for (j=node->keys_count-2; j >= 0  && node->keys[j] > a; j--)
+       node->keys[j+1] = node->keys[j];
+    node->keys[j+1] = a;
+    for (i=node->keys_count-2; i >= 0  && i >= j+2; i--)
         if(node->children[j] != NULL)
             node->children[j+1] = node->children[j];
-    node->children[i] = NULL;
+    node->children[i+1] = NULL;
     return node;
 }
 
 int root_count = 0;
-BLPTR add(BLPTR root, int a)
+BLPTR add(BLPTR root, int a, int root_add=0)
 {
     if(root != NULL)
     {
         BLPTR node;
-        if(root->keys_count != -1)
+        if(root->keys_count != -1 && root_add == 0)
             node = search(root, a);
         else 
             node = root;
         if(node->keys_count == 2*d - 1) { 
-            cout<<"Hello!"<<endl;
             ::root_count = 1;
             BLPTR overflow = overflow_create(node, a), parent = node->pptr, old_parent = node->pptr;
             int mid = overflow->keys[overflow->keys_count/2];
@@ -123,7 +121,7 @@ BLPTR add(BLPTR root, int a)
             }
             
             node2->children[0] = overflow->children[i+2];
-            for(int j=i+1; j<overflow->keys_count; j++)
+            for(int j=i+1; j<sizeof(overflow->keys)/sizeof(int); j++)
             {
                 node2 = basic_add(node2, overflow->keys[j]);
                 node2->children[j-i] = overflow->children[j+1];
@@ -133,9 +131,7 @@ BLPTR add(BLPTR root, int a)
                 parent = new blnode;
                 parent = init(parent);
             }
-            parent->pptr = old_parent;
-            cout<<"Foo : "<<a<<endl;
-            root = add(parent, mid);
+            root = add(parent, mid, 1);
             parent = search(root, mid);
             i = index(parent->keys, parent->keys_count+1, mid);
             parent->children[i] = node1;
@@ -144,7 +140,9 @@ BLPTR add(BLPTR root, int a)
             node2->pptr = parent;
             node = parent;
         } else  {
-            if(::root_count == 0)
+            if(root_add == 1)
+                node = root;
+            if(::root_count == 0 || root_add == 1)
             {
                 node = basic_add(node, a);
                 sort_it(node->keys, node->keys_count+1);
@@ -153,8 +151,9 @@ BLPTR add(BLPTR root, int a)
                 node = basic_add(node, a);
                 sort_it(node->keys, node->keys_count+1);
             }
+            if(root_add == 1)
+                return root;
         }
-        
         while(node->pptr != NULL)
             node = node->pptr;
         return node;
