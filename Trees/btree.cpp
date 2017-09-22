@@ -125,8 +125,6 @@ BLPTR add(BLPTR root, int a, int is_parent=0)
             root->pptr = parent;
             node2 = init(node2);
             int mid = overflow->keys[overflow->keys_count/2], i=0;
-            //parent = basic_add(parent, mid);
-            // Node 1
             for(; overflow->keys[i] < mid; i++)
             {
                 root = basic_add(root, overflow->keys[i]);
@@ -134,7 +132,6 @@ BLPTR add(BLPTR root, int a, int is_parent=0)
             }
             root->children[i] = overflow->children[i];
             i++;
-            // Node 2
             for(int j=i; j<overflow->keys_count; j++)
             {
                 node2 = basic_add(node2, overflow->keys[j]);

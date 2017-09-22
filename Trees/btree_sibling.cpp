@@ -212,10 +212,6 @@ BLPTR add(BLPTR root, int a, int is_parent=0)
                 for(i = 0; i<parent->keys_count; i++)
                     if(parent->children[i] && parent->children[i]->keys[0] == root->keys[0])
                         break;
-                if(parent->children[i])
-                    cout<<"parent->children[i] : "<<parent->children[i]->keys[0]<<endl;
-                if(parent->children[i+1])
-                    cout<<"parent->children[i+1] : "<<parent->children[i+1]->keys[0]<<endl;
                 if(parent->children[i+1] && node2->keys[0] != parent->children[i+1]->keys[0])
                 {
                     int j = 2*d+1;
