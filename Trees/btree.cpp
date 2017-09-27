@@ -42,12 +42,24 @@ void sort_it(int a[], int n)
             }
 }
 
-BLPTR basic_add(BLPTR root, int a)
+BLPTR basic_add(BLPTR root, int a, int is_parent=0)
 {
     if(root != NULL) 
     {
-        root->keys[++root->keys_count] = a;
-        sort_it(root->keys, root->keys_count+1);
+        if(is_parent == 0)
+        {
+            root->keys[++root->keys_count] = a;
+            sort_it(root->keys, root->keys_count+1);
+        } else {
+            int i;
+            for (i=root->keys_count; i >= 0  && root->keys[i] > a; i--)
+                root->keys[i+1] = root->keys[i];
+            root->keys[i+1] = a;
+            root->children[root->keys_count+2] = root->children[root->keys_count+1];
+            for (i=root->keys_count; i >= 0  && root->keys[i] > a; i--)
+                root->children[i+1] = root->children[i];
+            root->keys_count++;
+        }
     }
     return root;
 }
@@ -108,7 +120,7 @@ BLPTR overflow_create(BLPTR node, int a)
     return overflow;
 }
 
-BLPTR add(BLPTR root, int a, int is_parent=0)
+BLPTR add(BLPTR root, int a, int is_parent=0, BLPTR child1=NULL, BLPTR child2=NULL)
 {
     if(root != NULL)
     {
@@ -125,32 +137,49 @@ BLPTR add(BLPTR root, int a, int is_parent=0)
             root->pptr = parent;
             node2 = init(node2);
             int mid = overflow->keys[overflow->keys_count/2], i=0;
+            cout<<"Mid: "<<mid<<endl;
             for(; overflow->keys[i] < mid; i++)
             {
+                cout<<"LEFT - Key : ";
                 root = basic_add(root, overflow->keys[i]);
+                cout<<overflow->keys[i]<<" - Children : ";
                 root->children[i] = overflow->children[i];
+                if(overflow->children[i])
+                    cout<<overflow->children[i]->keys[0];
+                cout<<endl;
             }
             root->children[i] = overflow->children[i];
             i++;
             for(int j=i; j<overflow->keys_count; j++)
             {
+                cout<<"RIGHT- Key : ";
                 node2 = basic_add(node2, overflow->keys[j]);
+                cout<<overflow->keys[i]<<" - Children : ";
                 node2->children[j-i] = overflow->children[j];
+                if(overflow->children[i])
+                    cout<<overflow->children[i]->keys[0];
+                cout<<endl;
             }
-            parent = add(parent, mid, 1);
-            for(i = 0; i<parent->keys_count; i++)
-                if(parent->children[i] && parent->children[i]->keys[0] == root->keys[0])
-                    break;
-            parent->children[i] = root;
-            parent->children[i+1] = node2;
+            parent = add(parent, mid, 1, root, node2);
             root->pptr = parent;
             node2->pptr = parent;
+            if(node2->keys[0] == a)
+                root = node2;
         } else
-            root = basic_add(root, a);
+            root = basic_add(root, a, is_parent);
     } else {
         root = new blnode;
         root = init(root);
-        root = basic_add(root, a);
+        root = basic_add(root, a, is_parent);
+    }
+    if(is_parent == 1)
+    {
+        int i;
+        for(i=0; i<=root->keys_count; i++)
+           if(root->keys[i] == a)
+                break;
+        root->children[i] = child1;
+        root->children[i+1] = child2;
     }
     return root;
 }
@@ -159,7 +188,8 @@ void inorder(BLPTR node)
 {
     if(node != NULL)
     {
-        for(int i=0; i<=node->keys_count+1; i++)
+        int i;
+        for(i=0; i<=node->keys_count+1; i++)
         {
             if(node->children[i])
                 inorder(node->children[i]);
