@@ -137,28 +137,17 @@ BLPTR add(BLPTR root, int a, int is_parent=0, BLPTR child1=NULL, BLPTR child2=NU
             root->pptr = parent;
             node2 = init(node2);
             int mid = overflow->keys[overflow->keys_count/2], i=0;
-            cout<<"Mid: "<<mid<<endl;
             for(; overflow->keys[i] < mid; i++)
             {
-                cout<<"LEFT - Key : ";
                 root = basic_add(root, overflow->keys[i]);
-                cout<<overflow->keys[i]<<" - Children : ";
                 root->children[i] = overflow->children[i];
-                if(overflow->children[i])
-                    cout<<overflow->children[i]->keys[0];
-                cout<<endl;
             }
             root->children[i] = overflow->children[i];
             i++;
             for(int j=i; j<overflow->keys_count; j++)
             {
-                cout<<"RIGHT- Key : ";
                 node2 = basic_add(node2, overflow->keys[j]);
-                cout<<overflow->keys[i]<<" - Children : ";
                 node2->children[j-i] = overflow->children[j];
-                if(overflow->children[i])
-                    cout<<overflow->children[i]->keys[0];
-                cout<<endl;
             }
             parent = add(parent, mid, 1, root, node2);
             root->pptr = parent;
