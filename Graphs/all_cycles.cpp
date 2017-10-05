@@ -11,19 +11,19 @@ int index(int a[], int m, int l)
     return -1;
 }
 
-int count = 0, visit = 0;
-void cycle(int G[][n], int visited[], int start, int current=0)
+int visited[n] = {0};
+void BFT(int G[][n], int start)
 {
-    if(G[current][start] == 1 && start != current)
-        ::count++;
     for(int i=0; i<n; i++)
-        if(G[current][i] == 1 && current != i && index(visited, ::visit, i) == -1)
+        if(G[start][i] && ::visited[i] == 0)
         {
-            visited[::visit++] = current;
-            cycle(G, visited, start, i);
-            ::visit--;
+            cout<<i<<" ";
+            ::visited[i] = 1;
         }
-}
+    for(int i=0; i<n; i++)
+        if(G[start][i])
+            BFT(G, i);
+}       
 
 int main()
 {
