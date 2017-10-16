@@ -8,13 +8,23 @@ void insert(int G[][n], int row, int column, int weight=1)
     G[row-1][column-1] = weight;
 }
 
-int visited[n] = {0}, count[n] = {0}, curr_count = 0;
+int search(int edges[][2], int m, int a, int b)
+{
+    for(int i=0; i<m; i++)
+        if(edges[i][0] == a && edges[i][1] == b)
+            return 1;
+    return 0;
+}
+
+int visited[n] = {0}, count[n] = {0}, boo_count = 0;
+int components[n][n] = {0}, count_comp[n] = {0}, curr_count;
 int DFT(int G[][n], int start, int first=0)
 {
     ::visited[start] = 1;
     
     if(first == 0)
     {
+        ::components[::curr_count][::count_comp[::curr_count]++] = start;
         cout<<start + 1<<" ";
         ::count[start] = -1;
     }
@@ -23,9 +33,10 @@ int DFT(int G[][n], int start, int first=0)
         if(G[start][i] && ::visited[i] == 0)
             DFT(G, i, first);
     if(first == 1)
-        ::count[start] = ++curr_count;
+        ::count[start] = ++boo_count;
     return 0;
 }        
+
 
 void connected_comp(int G[][n])
 {
@@ -41,17 +52,18 @@ void connected_comp(int G[][n])
         DFT(G, index, 1);
     }
 
+    int newG[n][n] = {0};
     for(int i=0; i<n; i++)
         for(int j=i+1; j<n; j++)
             {
-                int k = G[i][j];
-                G[i][j] = G[j][i];
-                G[j][i] = k;
+                newG[i][j] = G[j][i];
+                newG[j][i] = G[i][j];
             }
 
     done = 0;
     for(int i=0; i<n; i++)
         ::visited[i] = 0;
+    ::curr_count = 0;
     while(done == 0)
     {
         done = 1;
@@ -67,9 +79,33 @@ void connected_comp(int G[][n])
                 ind = i;
                 max = ::count[i];
             }
-        DFT(G, ind, 0);
+        cout<<::curr_count<<" : ";
+        DFT(newG, ind, 0);
+        cout<<endl;
+        ::curr_count++;
+    }
+    /*
+    cout<<endl;
+    for(int i=0; i< ::curr_count; i++)
+    {
+        for(int j=0; j< ::count_comp[i]; j++)
+            cout<<::components[i][j] + 1<<" ";
         cout<<endl;
     }
+    */
+    cout<<endl;
+    int edges[n][2] = {0}, ecount = 0;
+    for(int i=0; i< ::curr_count; i++)
+        for(int j=0; j< ::count_comp[i]; j++)
+            for(int k=0; k < ::curr_count; k++)
+                for(int l=0; l< ::count_comp[k]; l++)
+                    if(k != i && G[j][l] && !search(edges, ecount, i, k) && !search(edges, ecount, k, i))
+                    {
+                        edges[ecount++][0] = i;
+                        edges[ecount][1] = k;
+                    }
+    for(int i=0; i<ecount; i++)
+        cout<<edges[i][0]<<" - "<<edges[i][1]<<endl;
 }
 
 int main()
