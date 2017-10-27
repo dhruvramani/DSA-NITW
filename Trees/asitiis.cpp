@@ -150,7 +150,7 @@ void level_order(BTPTR root)
 
 int main()
 {
-    char a[] = "AMI..Q..L..";
+    char a[] = "AMI..J..Q..L..";
     BTPTR root = new btnode;
     root = init(root);
     create(root, a);

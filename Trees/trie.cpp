@@ -48,7 +48,7 @@ int index(char a[], char m, int l)
 
 TPTR create(TPTR node, char key[])
 {
-    if(node == NULL) // No leaf node existed
+    if(node == NULL) 
     {
         node = new tnode;
         node = init_leaf(node, key);
@@ -58,9 +58,9 @@ TPTR create(TPTR node, char key[])
         int ind = index(alpha, key[::c_count++], n+1);
         if(ind == -1)
             ind = n;
-        if(node->ptr[ind] == NULL || node->ptr[ind]->tag == 1) // Continue transversing
+        if(node->ptr[ind] == NULL || node->ptr[ind]->tag == 1)
             node->ptr[ind] = create(node->ptr[ind], key);
-        else { // Can't traverse
+        else { 
             TPTR leaf_node = node->ptr[ind];
             int leaf_index = index(alpha, leaf_node->key[::c_count], n+1);
             node->ptr[ind] = new tnode;
@@ -70,6 +70,21 @@ TPTR create(TPTR node, char key[])
         }
     }
     return node;
+}
+
+void print(TPTR t)
+{
+    if(t->tag == 0)
+        cout<<t->key<<" ";
+    else {
+        for(int i=0; i<n+1; i++)
+            if(t->ptr[i])
+            {
+                cout<<::alpha[i]<<" ( ";
+                print(t->ptr[i]);
+                cout<<" ) ";
+            }
+    }
 }
 
 int find(TPTR t, char key[])
@@ -120,6 +135,7 @@ int main()
     node = create(node, "BAA");
     init_vars();
     node = create(node, "BCCAA");
+    print(node);
     init_vars();
     cout<<find(node, "BCCAA")<<endl;
     init_vars();
