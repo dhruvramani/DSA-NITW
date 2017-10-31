@@ -114,11 +114,11 @@ TPTR delete_key(TPTR t, char key[])
     if(ind == -1)
         ind = n;
     t->ptr[ind] = delete_key(t->ptr[ind], key);
-    int is_null = 1;
-    for(int i=0; i<n+1 && is_null == 1; i++)
+    int no_null = 0;
+    for(int i=0; i<n+1; i++)
         if(t->ptr[i] != NULL)
-            is_null = 0;
-    if(is_null == 1)
+            no_null++;
+    if(no_null == 1)
         t = NULL;
     return t;
 }

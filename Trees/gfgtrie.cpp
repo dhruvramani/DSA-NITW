@@ -64,22 +64,12 @@ TPTR create(TPTR node, char key[])
 
 void print(TPTR t)
 {
-    if(t != NULL)
-    {
-        if(t->tag == 1)
-        {
-            for(int i=0; i< ::p_count; i++)
-                cout<<p_array[i];
-            cout<<endl;
-        } else {
-            for(int i=0; i < n+1; i++)
-                if(t->ptr[i] != NULL)
-                {
-                    p_array[::p_count++] = alpha[i];
-                    print(t->ptr[i]);
-                    ::p_count--;
-                }
-        }
+    if(t->tag == 0)
+        cout<<t->key<<" ";
+    else {
+        for(int i=0; i<n+1; i++)
+            if(t->ptr[i])
+                print(t->ptr[i]);
     }
 }
 
