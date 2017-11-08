@@ -51,7 +51,7 @@ public:
 		if(sno > 0)
 		{
 			cout<<"\nRoll number: "<<sno;
-a			cout<<"\nCourse name: "<<cno;
+			cout<<"\nCourse name: "<<cno;
 		}
 	}
 
@@ -83,7 +83,7 @@ a			cout<<"\nCourse name: "<<cno;
 		f.close();
 
 		int cflag = 0, cfirstpos;
-		f.open("students.bin", ios::in|ios::binary);
+		f.open("courses.bin", ios::in|ios::binary);
 		while(f.read((char*)&sb, sizeof(sb)))
 		{
 			if(sb.cno == dummy.cno)
