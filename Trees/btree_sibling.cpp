@@ -144,7 +144,7 @@ BLPTR leftsibling(BLPTR node, int a)
                     node1->children[i] = overflow->children[i];
                 node1->pptr = parent;
                 parent->children[i] = node1;
-                return return_root(node);
+                return return_root(node1);
             } else 
                 return NULL;
         }
@@ -176,7 +176,7 @@ BLPTR rightsibling(BLPTR node, int a)
                     node1->children[i] = overflow->children[i];
                 node1->pptr = parent;
                 parent->children[i] = node1;
-                return return_root(node);
+                return return_root(node1);
             } else 
                 return NULL;
         }

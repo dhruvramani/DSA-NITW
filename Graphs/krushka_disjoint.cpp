@@ -61,10 +61,12 @@ void krushka(int G[][n])
         G[r][c] = 0;
         G[c][r] = 0;
         done = 1;
+
         for(int i=0; i<n && done == 1; i++)
             for(int j=0; j<n; j++)
                 if(G[i][j])
                     done = 0;
+
     }
     for(int i=1; i<size; i++)
         cout<<i<<" "<<::s[i]<<endl;

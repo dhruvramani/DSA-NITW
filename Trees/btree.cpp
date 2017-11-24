@@ -113,7 +113,7 @@ BLPTR overflow_create(BLPTR node, int a)
         for(int j=i-1; node->keys[j] != -1; i++, j++)
         {
             overflow = basic_add(overflow, node->keys[j]);
-            overflow->children[i] = node->children[j];   
+            overflow->children[i] = node->children[j];
         }
     }
     overflow->keys_count++;

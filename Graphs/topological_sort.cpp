@@ -6,11 +6,12 @@ using namespace std;
 void insert(int G[][n], int row, int column, int weight=1)
 { G[row-1][column-1] = weight; }
 
-int stack[n] = {0}, count=0;
+int stack[n] = {0}, visited[n] = {0}, count=0;
 void topo_mini(int G[][n], int s)
 {
+    visited[s] = 1;
     for(int i=0; i<n; i++)
-        if(G[s][i])
+        if(G[s][i] && !visited[i]) 
             topo_mini(G, i);
     ::stack[::count++] = s;
 }
